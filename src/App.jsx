@@ -201,12 +201,13 @@ const App = () => {
               <span className="text-xs font-medium text-slate-600">CSV読込</span>
               <input type="file" accept=".csv" onChange={handleCsvUpload} className="hidden" />
             </label>
-            <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-orange-400 hover:bg-orange-50 transition cursor-pointer group">
+            <button 
+              onClick={downloadJSON}
+              className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-orange-400 hover:bg-orange-50 transition group"
+            >
               <Download className="text-slate-400 group-hover:text-orange-500 mb-1" size={20} />
               <span className="text-xs font-medium text-slate-600">JSON保存</span>
-              <button onClick={downloadJSON} className="hidden" />
-              <div onClick={downloadJSON} className="absolute inset-0 z-0"></div>
-            </label>
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

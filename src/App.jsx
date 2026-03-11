@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Upload, Printer, UserPlus, Settings2, Image as ImageIcon, 
   Trash2, Download, FileUp, Plus, ChevronRight, Layout,
-  Type, Building2, User
+  Type, Building2, User, Copy
 } from 'lucide-react';
 
 const App = () => {
@@ -91,6 +91,25 @@ const App = () => {
       };
       reader.readAsText(file);
     }
+  };
+
+  const copySizesToAll = (sourceId) => {
+    const sourceMember = members.find(m => m.id === sourceId);
+    if (!sourceMember) return;
+    
+    if (!window.confirm('この名札の「氏名・役職・社名」の文字サイズを、他の全員の名札にも適用しますか？')) {
+      return;
+    }
+    
+    setMembers(members.map(m => {
+      if (m.id === sourceId) return m;
+      return {
+        ...m,
+        nameSize: sourceMember.nameSize,
+        titleSize: sourceMember.titleSize,
+        companySize: sourceMember.companySize
+      };
+    }));
   };
 
   const updateMember = (id, field, value) => {
@@ -443,6 +462,15 @@ const App = () => {
                           <input type="range" min="10" max="60" value={m.companySize} onChange={(e) => updateMember(m.id, 'companySize', parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
                         </div>
                       </div>
+                      <div className="mt-2 text-right">
+                        <button 
+                          onClick={() => copySizesToAll(m.id)}
+                          className="text-xs text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 py-1.5 px-3 rounded inline-flex items-center gap-1.5 transition-colors"
+                        >
+                          <Copy size={12} />
+                          サイズを全員に適用
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -474,7 +502,7 @@ const App = () => {
                           {m.logo && <img src={m.logo} className="h-full object-contain max-w-[50px]" alt="logo" />}
                           <span style={{ fontSize: `${m.companySize}px` }} className="font-bold text-slate-800 tracking-[0.15em] whitespace-nowrap">{m.company}</span>
                         </div>
-                        <div className="flex items-baseline justify-center gap-6 w-full">
+                        <div className="flex items-center justify-center gap-6 w-full">
                           <div style={{ fontSize: `${m.titleSize}px` }} className="font-bold text-slate-700 leading-tight whitespace-pre-line text-right w-[40%]">
                             {m.title}
                           </div>
@@ -492,7 +520,7 @@ const App = () => {
                           {m.logo && <img src={m.logo} className="h-full object-contain max-w-[50px]" alt="logo" />}
                           <span style={{ fontSize: `${m.companySize}px` }} className="font-bold text-slate-800 tracking-[0.15em] whitespace-nowrap">{m.company}</span>
                         </div>
-                        <div className="flex items-baseline justify-center gap-6 w-full">
+                        <div className="flex items-center justify-center gap-6 w-full">
                           <div style={{ fontSize: `${m.titleSize}px` }} className="font-bold text-slate-700 leading-tight whitespace-pre-line text-right w-[40%]">
                             {m.title}
                           </div>

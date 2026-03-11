@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Upload, Printer, UserPlus, Settings2, Image as ImageIcon, Trash2, Download } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Upload, Printer, UserPlus, Settings2, Image as ImageIcon, Trash2, Download, FileUp, Save } from 'lucide-react';
 
 const App = () => {
   const [logo, setLogo] = useState(null);
@@ -7,7 +7,32 @@ const App = () => {
     { id: 1, company: '八洲建設株式会社', title: '代表取締役', name: '水野 貴之', titleSize: 24, nameSize: 72, companySize: 20 },
     { id: 2, company: '八洲建設株式会社', title: '取締役 経営企画部長', name: '市山 秀典', titleSize: 20, nameSize: 64, companySize: 20 }
   ]);
-  const [activeTab, setActiveTab] = useState(0);
+
+  // 初期読み込み: localStorageからデータを復元
+  useEffect(() => {
+    const savedMembers = localStorage.getItem('nameplate-members');
+    const savedLogo = localStorage.getItem('nameplate-logo');
+    if (savedMembers) {
+      try {
+        setMembers(JSON.parse(savedMembers));
+      } catch (e) {
+        console.error('Failed to parse saved members', e);
+      }
+    }
+    if (savedLogo) {
+      setLogo(savedLogo);
+    }
+  }, []);
+
+  // データの自動保存: members または logo が変更されたら localStorage に保存
+  useEffect(() => {
+    localStorage.setItem('nameplate-members', JSON.stringify(members));
+    if (logo) {
+      localStorage.setItem('nameplate-logo', logo);
+    } else {
+      localStorage.removeItem('nameplate-logo');
+    }
+  }, [members, logo]);
 
   // ロゴアップロード処理
   const handleLogoUpload = (e) => {
@@ -40,6 +65,43 @@ const App = () => {
           };
         });
         setMembers(newMembers);
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  // JSONダウンロード (設定の書き出し)
+  const downloadJSON = () => {
+    const data = {
+      version: '1.0',
+      logo: logo,
+      members: members
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `nameplate-data-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // JSONアップロード (設定の読み込み)
+  const handleJSONUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (f) => {
+        try {
+          const data = JSON.parse(f.target.result);
+          if (data.members) setMembers(data.members);
+          if (data.logo) setLogo(data.logo);
+          alert('設定を読み込みました');
+        } catch (e) {
+          alert('JSONファイルの読み込みに失敗しました');
+        }
       };
       reader.readAsText(file);
     }
@@ -106,6 +168,21 @@ const App = () => {
                 名簿を追加
               </button>
             </div>
+            
+            <div className="flex flex-wrap gap-3 mt-2">
+              <button 
+                onClick={downloadJSON}
+                className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+              >
+                <Download size={18} />
+                JSONをダウンロード
+              </button>
+              <label className="flex items-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                <FileUp size={18} />
+                JSONをアップロード
+                <input type="file" accept=".json" onChange={handleJSONUpload} className="hidden" />
+              </label>
+            </div>
             <p className="text-xs text-slate-500 italic">※CSV形式: 会社名,役職,氏名</p>
           </div>
 
@@ -165,7 +242,6 @@ const App = () => {
                 {/* 山折り部分（反転） */}
                 <div className="h-1/2 w-full flex flex-col justify-end items-center pb-12 rotate-180 transform border-b border-slate-100">
                    <div className="flex items-center justify-center gap-3 mb-4">
-                    {logo ? <img src={logo} className="h-10 object-contain" alt="logo" /> : <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold">八</div>}
                     <span style={{ fontSize: `${m.companySize}px` }} className="font-bold text-slate-800 tracking-wider whitespace-nowrap">{m.company}</span>
                   </div>
                   <div className="flex items-center justify-center gap-6 w-full px-12">
@@ -181,7 +257,6 @@ const App = () => {
                 {/* 表側 */}
                 <div className="h-1/2 w-full flex flex-col justify-center items-center pt-12">
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    {logo ? <img src={logo} className="h-10 object-contain" alt="logo" /> : <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold">八</div>}
                     <span style={{ fontSize: `${m.companySize}px` }} className="font-bold text-slate-800 tracking-wider whitespace-nowrap">{m.company}</span>
                   </div>
                   <div className="flex items-center justify-center gap-6 w-full px-12">

@@ -132,31 +132,58 @@ const App = () => {
         .serif { font-family: 'Noto Serif JP', serif; }
         
         @media screen {
-          .preview-container {
-            height: calc(100vh - 2rem);
+          .preview-scroll {
+            height: 100vh;
             overflow-y: auto;
-            position: sticky;
-            top: 1rem;
+            padding: 2rem 1rem;
+          }
+          .page-wrapper {
+            /* 210mm * 0.5 = 105mm ≈ 397px, 297mm * 0.5 = 148.5mm ≈ 561px */
+            width: 397px;
+            height: 561px;
+            margin: 0 auto 1.5rem auto;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           }
           .a4-page {
             width: 210mm;
             height: 297mm;
             padding: 0;
             background: white;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            transform-origin: top center;
-            transform: scale(0.6);
+            transform-origin: top left;
+            transform: scale(0.5);
           }
         }
 
         @media screen and (min-width: 1280px) {
-          .a4-page { transform: scale(0.7); }
+          .page-wrapper {
+            /* 210mm * 0.55 ≈ 437px, 297mm * 0.55 ≈ 617px */
+            width: 437px;
+            height: 617px;
+          }
+          .a4-page { transform: scale(0.55); }
+        }
+
+        @media screen and (min-width: 1536px) {
+          .page-wrapper {
+            width: 476px;
+            height: 672px;
+          }
+          .a4-page { transform: scale(0.6); }
         }
 
         @media print {
           body { background: white !important; margin: 0 !important; padding: 0 !important; }
           .no-print { display: none !important; }
+          .page-wrapper {
+            width: auto !important;
+            height: auto !important;
+            margin: 0 !important;
+            overflow: visible !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+          }
           .a4-page {
             width: 210mm;
             height: 297mm;
@@ -343,8 +370,9 @@ const App = () => {
       </div>
 
       {/* プレビューパネル (右) */}
-      <div className="flex-1 bg-[#f1f5f9] p-4 md:p-8 flex justify-center no-print overflow-hidden">
-        <div className="preview-container w-full max-w-[850px] flex flex-col items-center">
+      <div className="flex-1 bg-[#f1f5f9] no-print">
+        <div className="preview-scroll">
+          <div className="flex flex-col items-center">
           {pages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-4 mt-20">
               <Layout size={64} opacity={0.2} />
@@ -352,7 +380,8 @@ const App = () => {
             </div>
           ) : (
             pages.map((pageMembers, pIdx) => (
-              <div key={pIdx} className="a4-page relative overflow-hidden">
+              <div key={pIdx} className="page-wrapper">
+              <div className="a4-page relative overflow-hidden">
                 {pageMembers.map((m, mIdx) => (
                   <div key={m.id} className="nameplate-slot relative h-1/2 flex flex-col justify-center overflow-hidden">
                     {/* 山折り部分（反転） */}
@@ -397,8 +426,10 @@ const App = () => {
                   </div>
                 ))}
               </div>
+              </div>
             ))
           )}
+          </div>
         </div>
       </div>
 

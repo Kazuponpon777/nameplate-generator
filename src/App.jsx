@@ -124,7 +124,7 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col md:flex-row print-root">
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&family=Inter:wght@400;700&display=swap');
         
@@ -175,35 +175,85 @@ const App = () => {
 
         @media print {
           @page {
-            size: A4;
+            size: 210mm 297mm;
             margin: 0;
           }
-          body { background: white !important; margin: 0 !important; padding: 0 !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          html, body {
+            width: 210mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            overflow: visible !important;
+          }
           .no-print { display: none !important; }
+          
+          /* Reset parent containers */
+          .print-root {
+            min-height: 0 !important;
+            display: block !important;
+            width: 210mm !important;
+          }
+          .print-container {
+            flex: none !important;
+            display: block !important;
+            width: 210mm !important;
+            background: white !important;
+          }
+          .preview-scroll {
+            height: auto !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            display: block !important;
+          }
+          .preview-scroll > div {
+            display: block !important;
+            width: 210mm !important;
+          }
+          
+          /* Page wrapper = exactly A4 */
           .page-wrapper {
             width: 210mm !important;
             height: 297mm !important;
             margin: 0 !important;
+            padding: 0 !important;
             overflow: hidden !important;
             border-radius: 0 !important;
             box-shadow: none !important;
+            page-break-after: always;
+            page-break-inside: avoid;
           }
           .a4-page {
             width: 210mm !important;
             height: 297mm !important;
             margin: 0 !important;
             padding: 0 !important;
-            page-break-after: always;
             box-shadow: none !important;
             border: none !important;
             transform: none !important;
+            display: flex !important;
+            flex-direction: column !important;
           }
-          .nameplate-slot { border-bottom: 1px dashed #ccc !important; }
-          .preview-scroll {
-            height: auto !important;
-            overflow: visible !important;
-            padding: 0 !important;
+          
+          /* Each nameplate = exactly half of A4 height */
+          .nameplate-slot {
+            width: 210mm !important;
+            height: 148.5mm !important;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            overflow: hidden !important;
+            border-bottom: 1px solid #ddd !important;
           }
+          /* Top half (mountain fold) and bottom half (front) */
+          .nameplate-half {
+            height: 74.25mm !important;
+            min-height: 74.25mm !important;
+            max-height: 74.25mm !important;
+            overflow: hidden !important;
+          }
+          
+          .fold-guide { display: none !important; }
         }
 
         input[type=range]::-webkit-slider-thumb {
@@ -379,7 +429,7 @@ const App = () => {
       </div>
 
       {/* プレビューパネル (右) - 印刷時はこれがそのまま出力される */}
-      <div className="flex-1 bg-[#f1f5f9] print:bg-white">
+      <div className="flex-1 bg-[#f1f5f9] print-container">
         <div className="preview-scroll">
           <div className="flex flex-col items-center">
           {pages.length === 0 ? (
@@ -394,7 +444,7 @@ const App = () => {
                 {pageMembers.map((m, mIdx) => (
                   <div key={m.id} className="nameplate-slot relative h-1/2 flex flex-col justify-center overflow-hidden">
                     {/* 山折り部分（反転） */}
-                    <div className="h-1/2 w-full flex flex-col justify-end items-center pb-10 rotate-180 transform border-b border-slate-50">
+                    <div className="nameplate-half h-1/2 w-full flex flex-col justify-end items-center pb-10 rotate-180 transform border-b border-slate-50">
                       <div className="flex flex-col items-center justify-center w-full px-16">
                         <div className="flex items-center justify-center gap-4 mb-3 h-10">
                           {m.logo && <img src={m.logo} className="h-full object-contain max-w-[50px]" alt="logo" />}
@@ -412,7 +462,7 @@ const App = () => {
                     </div>
 
                     {/* 表側 */}
-                    <div className="h-1/2 w-full flex flex-col justify-center items-center pt-10">
+                    <div className="nameplate-half h-1/2 w-full flex flex-col justify-center items-center pt-10">
                       <div className="flex flex-col items-center justify-center w-full px-16">
                         <div className="flex items-center justify-center gap-4 mb-3 h-10">
                           {m.logo && <img src={m.logo} className="h-full object-contain max-w-[50px]" alt="logo" />}
@@ -430,8 +480,8 @@ const App = () => {
                     </div>
                     
                     {/* 折り目ガイド線 */}
-                    <div className="absolute top-1/2 left-0 w-full border-t border-slate-200 border-dotted pointer-events-none"></div>
-                    <div className="absolute top-1/2 left-2 -translate-y-1/2 text-[10px] text-slate-300 font-mono print:hidden">山折り</div>
+                    <div className="fold-guide absolute top-1/2 left-0 w-full border-t border-slate-200 border-dotted pointer-events-none"></div>
+                    <div className="fold-guide absolute top-1/2 left-2 -translate-y-1/2 text-[10px] text-slate-300 font-mono">山折り</div>
                   </div>
                 ))}
               </div>

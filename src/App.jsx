@@ -183,66 +183,70 @@ const App = () => {
       `}} />
 
       {/* エディタパネル (左) */}
-      <div className="w-full md:w-[400px] lg:w-[450px] bg-white border-r border-slate-200 p-6 no-print overflow-y-auto h-screen shrink-0 shadow-xl z-10">
-        <header className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="bg-blue-600 p-2 rounded-lg">
-              <Layout className="text-white" size={20} />
+      <div className="w-full md:w-[400px] lg:w-[450px] bg-white border-r border-slate-200 no-print shrink-0 shadow-xl z-10 flex flex-col h-screen">
+        {/* 固定ヘッダー＋ツールバー */}
+        <div className="shrink-0 p-6 pb-4">
+          <header className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="bg-blue-600 p-2 rounded-lg">
+                <Layout className="text-white" size={20} />
+              </div>
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">卓上名札ジェネレーター</h1>
             </div>
-            <h1 className="text-xl font-bold text-slate-900 tracking-tight">卓上名札ジェネレーター</h1>
-          </div>
-          <p className="text-slate-500 text-sm">高品質な卓上名札をA4用紙で作成</p>
-        </header>
+            <p className="text-slate-500 text-sm">高品質な卓上名札をA4用紙で作成</p>
+          </header>
 
-        <section className="space-y-6">
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer group">
-              <FileUp className="text-slate-400 group-hover:text-blue-500 mb-1" size={20} />
-              <span className="text-xs font-medium text-slate-600">CSV読込</span>
-              <input type="file" accept=".csv" onChange={handleCsvUpload} className="hidden" />
-            </label>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer group">
+                <FileUp className="text-slate-400 group-hover:text-blue-500 mb-1" size={20} />
+                <span className="text-xs font-medium text-slate-600">CSV読込</span>
+                <input type="file" accept=".csv" onChange={handleCsvUpload} className="hidden" />
+              </label>
+              <button 
+                onClick={downloadJSON}
+                className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-orange-400 hover:bg-orange-50 transition group"
+              >
+                <Download className="text-slate-400 group-hover:text-orange-500 mb-1" size={20} />
+                <span className="text-xs font-medium text-slate-600">JSON保存</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-slate-400 hover:bg-slate-50 transition cursor-pointer group">
+                <FileUp className="text-slate-400 group-hover:text-slate-600 mb-1" size={20} />
+                <span className="text-xs font-medium text-slate-600">JSON設定読込</span>
+                <input type="file" accept=".json" onChange={handleJSONUpload} className="hidden" />
+              </label>
+              <button 
+                onClick={addMember}
+                className="flex flex-col items-center justify-center p-3 bg-slate-900 border border-slate-900 rounded-xl hover:bg-slate-800 transition group"
+              >
+                <Plus className="text-white group-hover:scale-110 transition" size={20} />
+                <span className="text-xs font-medium text-white">名簿追加</span>
+              </button>
+            </div>
+
             <button 
-              onClick={downloadJSON}
-              className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-orange-400 hover:bg-orange-50 transition group"
+              onClick={print}
+              className="w-full flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-blue-200 transition-all active:scale-95 shadow-md"
             >
-              <Download className="text-slate-400 group-hover:text-orange-500 mb-1" size={20} />
-              <span className="text-xs font-medium text-slate-600">JSON保存</span>
+              <Printer size={22} />
+              A4 印刷する
             </button>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-3">
-             <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-slate-400 hover:bg-slate-50 transition cursor-pointer group">
-              <FileUp className="text-slate-400 group-hover:text-slate-600 mb-1" size={20} />
-              <span className="text-xs font-medium text-slate-600">JSON設定読込</span>
-              <input type="file" accept=".json" onChange={handleJSONUpload} className="hidden" />
-            </label>
-            <button 
-              onClick={addMember}
-              className="flex flex-col items-center justify-center p-3 bg-slate-900 border border-slate-900 rounded-xl hover:bg-slate-800 transition group"
-            >
-              <Plus className="text-white group-hover:scale-110 transition" size={20} />
-              <span className="text-xs font-medium text-white">名簿追加</span>
-            </button>
-          </div>
-
-          <button 
-            onClick={print}
-            className="w-full flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-blue-200 transition-all active:scale-95 shadow-md"
-          >
-            <Printer size={22} />
-            A4 印刷する
-          </button>
-
-          <hr className="border-slate-100" />
-
-          <div className="space-y-4">
-            <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+        {/* スクロール可能な名簿リスト */}
+        <div className="flex-1 overflow-y-auto min-h-0 px-6 pb-6 border-t border-slate-100">
+          <div className="pt-4">
+            <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 mb-4">
               個別調整 <span className="bg-slate-100 px-2 py-0.5 rounded-full text-xs">{members.length}件</span>
             </h2>
             
             <div className="space-y-4">
               {members.map((m, idx) => (
-                <div key={m.id} className="bg-slate-50 rounded-2xl border border-slate-200 p-4 relative group/card">
+                <div key={m.id} className="bg-slate-50 rounded-2xl border border-slate-200 p-4 relative">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-xs font-bold text-slate-400">名札 #{idx + 1}</span>
                     <button onClick={() => removeMember(m.id)} className="text-slate-300 hover:text-red-500 transition p-1">
@@ -253,17 +257,17 @@ const App = () => {
                   <div className="space-y-4">
                     <div className="flex gap-3">
                       <div className="shrink-0">
-                        <label className="block w-16 h-16 rounded-lg border-2 border-dashed border-slate-300 bg-white flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition group overflow-hidden relative">
+                        <label className="block w-16 h-16 rounded-lg border-2 border-dashed border-slate-300 bg-white cursor-pointer hover:border-blue-400 transition overflow-hidden relative" style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
                           {m.logo ? (
                             <img src={m.logo} className="w-full h-full object-contain p-1" alt="logo" />
                           ) : (
-                            <ImageIcon className="text-slate-300 group-hover:text-blue-400" size={24} />
+                            <ImageIcon className="text-slate-300" size={24} />
                           )}
                           <input type="file" accept="image/*" onChange={(e) => handleLogoUpload(m.id, e)} className="hidden" />
                           {m.logo && (
                             <button 
                               onClick={(e) => { e.preventDefault(); updateMember(m.id, 'logo', null); }}
-                              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition"
+                              className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 flex items-center justify-center transition"
                             >
                               <Trash2 size={16} className="text-white" />
                             </button>
@@ -271,7 +275,7 @@ const App = () => {
                         </label>
                       </div>
                       <div className="flex-1 space-y-2">
-                         <div className="relative">
+                        <div className="relative">
                           <Building2 className="absolute left-2.5 top-2.5 text-slate-400" size={14} />
                           <input 
                             type="text" 
@@ -306,7 +310,7 @@ const App = () => {
                     </div>
 
                     <div className="px-1 space-y-3 pt-2">
-                       <div>
+                      <div>
                         <div className="flex justify-between mb-1">
                           <span className="text-[10px] uppercase font-bold text-slate-400">氏名サイズ</span>
                           <span className="text-xs font-bold text-blue-600">{m.nameSize}px</span>
@@ -335,7 +339,7 @@ const App = () => {
               ))}
             </div>
           </div>
-        </section>
+        </div>
       </div>
 
       {/* プレビューパネル (右) */}

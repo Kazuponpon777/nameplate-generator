@@ -153,6 +153,27 @@ const App = () => {
             background: white;
             transform-origin: top left;
             transform: scale(0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15mm;
+          }
+          /* Screen preview nameplate styling */
+          .nameplate-slot {
+            width: 180mm;
+            height: 130mm;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+          }
+          .nameplate-half {
+            height: 65mm;
+            min-height: 65mm;
+            max-height: 65mm;
+            overflow: hidden;
           }
         }
 
@@ -233,23 +254,26 @@ const App = () => {
             transform: none !important;
             display: flex !important;
             flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 15mm !important;
           }
           
-          /* Each nameplate = exactly half of A4 height */
+          /* Each nameplate = exactly 180x130mm */
           .nameplate-slot {
-            width: 210mm !important;
-            height: 148.5mm !important;
+            width: 180mm !important;
+            height: 130mm !important;
             display: flex !important;
             flex-direction: column !important;
             position: relative !important;
             overflow: hidden !important;
-            border-bottom: 1px solid #ddd !important;
+            border: 1px solid #ddd !important;
           }
           /* Top half (mountain fold) and bottom half (front) */
           .nameplate-half {
-            height: 74.25mm !important;
-            min-height: 74.25mm !important;
-            max-height: 74.25mm !important;
+            height: 65mm !important;
+            min-height: 65mm !important;
+            max-height: 65mm !important;
             overflow: hidden !important;
           }
           
@@ -442,9 +466,9 @@ const App = () => {
               <div key={pIdx} className="page-wrapper">
               <div className="a4-page relative overflow-hidden">
                 {pageMembers.map((m, mIdx) => (
-                  <div key={m.id} className="nameplate-slot relative h-1/2 flex flex-col justify-center overflow-hidden">
+                  <div key={m.id} className="nameplate-slot relative">
                     {/* 山折り部分（反転） */}
-                    <div className="nameplate-half h-1/2 w-full flex flex-col justify-end items-center pb-10 rotate-180 transform border-b border-slate-50">
+                    <div className="nameplate-half flex flex-col justify-end items-center pb-6 rotate-180 transform border-b border-slate-50">
                       <div className="flex flex-col items-center justify-center w-full px-16">
                         <div className="flex items-center justify-center gap-4 mb-3 h-10">
                           {m.logo && <img src={m.logo} className="h-full object-contain max-w-[50px]" alt="logo" />}
@@ -462,7 +486,7 @@ const App = () => {
                     </div>
 
                     {/* 表側 */}
-                    <div className="nameplate-half h-1/2 w-full flex flex-col justify-center items-center pt-10">
+                    <div className="nameplate-half flex flex-col justify-center items-center pt-6">
                       <div className="flex flex-col items-center justify-center w-full px-16">
                         <div className="flex items-center justify-center gap-4 mb-3 h-10">
                           {m.logo && <img src={m.logo} className="h-full object-contain max-w-[50px]" alt="logo" />}

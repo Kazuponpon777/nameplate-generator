@@ -174,19 +174,23 @@ const App = () => {
         }
 
         @media print {
+          @page {
+            size: A4;
+            margin: 0;
+          }
           body { background: white !important; margin: 0 !important; padding: 0 !important; }
           .no-print { display: none !important; }
           .page-wrapper {
-            width: auto !important;
-            height: auto !important;
+            width: 210mm !important;
+            height: 297mm !important;
             margin: 0 !important;
-            overflow: visible !important;
+            overflow: hidden !important;
             border-radius: 0 !important;
             box-shadow: none !important;
           }
           .a4-page {
-            width: 210mm;
-            height: 297mm;
+            width: 210mm !important;
+            height: 297mm !important;
             margin: 0 !important;
             padding: 0 !important;
             page-break-after: always;
@@ -195,6 +199,11 @@ const App = () => {
             transform: none !important;
           }
           .nameplate-slot { border-bottom: 1px dashed #ccc !important; }
+          .preview-scroll {
+            height: auto !important;
+            overflow: visible !important;
+            padding: 0 !important;
+          }
         }
 
         input[type=range]::-webkit-slider-thumb {
@@ -369,8 +378,8 @@ const App = () => {
         </div>
       </div>
 
-      {/* プレビューパネル (右) */}
-      <div className="flex-1 bg-[#f1f5f9] no-print">
+      {/* プレビューパネル (右) - 印刷時はこれがそのまま出力される */}
+      <div className="flex-1 bg-[#f1f5f9] print:bg-white">
         <div className="preview-scroll">
           <div className="flex flex-col items-center">
           {pages.length === 0 ? (
@@ -433,50 +442,7 @@ const App = () => {
         </div>
       </div>
 
-      {/* 印刷用純粋エリア (画面上は非表示、印刷時のみ visible) */}
-      <div className="hidden print:block fixed inset-0 z-0 bg-white">
-        {pages.map((pageMembers, pIdx) => (
-          <div key={pIdx} className="a4-page relative overflow-hidden bg-white">
-            {pageMembers.map((m) => (
-              <div key={m.id} className="nameplate-slot relative h-[148.5mm] flex flex-col justify-center">
-                <div className="h-1/2 w-full flex flex-col justify-end items-center pb-12 rotate-180 transform border-b border-slate-50">
-                  <div className="flex flex-col items-center justify-center w-full px-20">
-                    <div className="flex items-center justify-center gap-5 mb-4 h-12">
-                      {m.logo && <img src={m.logo} className="h-full object-contain max-w-[60px]" alt="logo" />}
-                      <span style={{ fontSize: `${m.companySize}px` }} className="font-bold text-slate-800 tracking-[0.15em] whitespace-nowrap">{m.company}</span>
-                    </div>
-                    <div className="flex items-baseline justify-center gap-8 w-full">
-                      <div style={{ fontSize: `${m.titleSize}px` }} className="font-bold text-slate-700 leading-tight whitespace-pre-line text-right w-[40%]">
-                        {m.title}
-                      </div>
-                      <div style={{ fontSize: `${m.nameSize}px` }} className="serif font-bold text-black flex-1 text-left tracking-[0.2em] whitespace-nowrap leading-none py-2">
-                        {m.name}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="h-1/2 w-full flex flex-col justify-center items-center pt-12">
-                  <div className="flex flex-col items-center justify-center w-full px-20">
-                    <div className="flex items-center justify-center gap-5 mb-4 h-12">
-                      {m.logo && <img src={m.logo} className="h-full object-contain max-w-[60px]" alt="logo" />}
-                      <span style={{ fontSize: `${m.companySize}px` }} className="font-bold text-slate-800 tracking-[0.15em] whitespace-nowrap">{m.company}</span>
-                    </div>
-                    <div className="flex items-baseline justify-center gap-8 w-full">
-                      <div style={{ fontSize: `${m.titleSize}px` }} className="font-bold text-slate-700 leading-tight whitespace-pre-line text-right w-[40%]">
-                        {m.title}
-                      </div>
-                      <div style={{ fontSize: `${m.nameSize}px` }} className="serif font-bold text-black flex-1 text-left tracking-[0.2em] whitespace-nowrap leading-none py-2">
-                        {m.name}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute top-1/2 left-0 w-full border-t border-slate-200 border-dotted opacity-20"></div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+
     </div>
   );
 };
